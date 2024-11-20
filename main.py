@@ -12,6 +12,7 @@ HEAD_COLOR = '#00FF00'
 FOOD_COLOR = '#FF0000'
 BACKGROUND_COLOR = '#000000'
 
+
 class Snake:
     def __init__(self, canvas):
         self.canvas = canvas
@@ -34,6 +35,7 @@ class Snake:
             )
             self.squares.append(square)
 
+
 class Food:
     def __init__(self, canvas, snake):
         self.canvas = canvas
@@ -51,17 +53,18 @@ class Food:
             fill=FOOD_COLOR, outline=BACKGROUND_COLOR, tags='food'
         )
 
+
 class Game:
     def __init__(self):
-        # Initialize the main window
-        self.window = Tk()
-        self.window.title('Snake Game')
-        self.window.resizable(False, False)
-
         # Initialize game variables
         self.direction = 'right'
         self.score = 0
         self.speed = SPEED
+
+        # Initialize the main window
+        self.window = Tk()
+        self.window.title('Snake Game')
+        self.window.resizable(False, False)
 
         # Create label and canvas
         self.label = Label(self.window, text=f"Score: {self.score}", font=('consolas', 30))
@@ -90,6 +93,9 @@ class Game:
         self.snake = Snake(self.canvas)
         self.food = Food(self.canvas, self.snake)
 
+        # Initialise attribute for wave effect
+        self.segment_color_index = None
+
         # Bind keys to change direction
         self.window.bind('<Left>', lambda event: self.change_direction('left'))
         self.window.bind('<a>', lambda event: self.change_direction('left'))
@@ -105,7 +111,7 @@ class Game:
 
         self.window.mainloop()
 
-    def next_turn(self):
+    def next_turn(self, *args):
         x_coord, y_coord = self.snake.coordinates[0]
 
         # Determine the new position of the head based on the direction
@@ -132,12 +138,23 @@ class Game:
         if len(self.snake.squares) > 1:
             self.canvas.itemconfig(self.snake.squares[1], fill=SNAKE_COLOR)
 
+        if self.segment_color_index is not None:
+            if self.segment_color_index < len(self.snake.squares):
+                part = self.snake.squares[self.segment_color_index]
+                self.canvas.itemconfig(part, fill=FOOD_COLOR)
+                self.segment_color_index += 1
+            else:
+                self.segment_color_index = None
+
         # Check if snake has eaten the food
         if x_coord == self.food.coordinates[0] and y_coord == self.food.coordinates[1]:
             self.score += 1
             self.speed = max(self.speed - 2, 20)
 
             self.label.config(text=f"Score: {self.score}")
+
+            # Start wave effect from head
+            self.segment_color_index = 0
 
             # Delete the old food and create a new one
             self.canvas.delete('food')
@@ -152,8 +169,8 @@ class Game:
         if self.check_collision():
             self.game_over()
         else:
-            # Continue the game after a delay
-            self.window.after(self.speed, self.next_turn)
+            # Continue the game
+            self.window.after(self.speed, self.next_turn, *args)
 
     def change_direction(self, new_direction):
         if new_direction == 'left' and self.direction != 'right':
@@ -182,12 +199,45 @@ class Game:
         return False
 
     def game_over(self):
+        highscore = Game.read_highscore()
+
+        if highscore < self.score:
+            self.write_highscore()
+            highscore = self.score
+
         # Display Game Over message
         self.canvas.delete(ALL)
         self.canvas.create_text(
-            self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
-            font=('consolas', 70), text='GAME OVER', fill='RED', tags='game_over'
+            self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2 - 50,
+            font=('consolas', 70),
+            text='GAME OVER',
+            fill='RED',
+            tags='game_over'
         )
+        self.canvas.create_text(
+            self.canvas.winfo_width() / 2,
+            self.canvas.winfo_height() / 2 + 50,
+            font=('consolas', 30),
+            text=f"High Score: {highscore}",
+            fill='WHITE',
+            tags='highscore'
+        )
+
+    def write_highscore(self):
+        # Write highscore to txt file
+        with open('highscore.txt', 'w') as txt_score:
+            txt_score.write(f"{self.score}")
+
+    @staticmethod
+    def read_highscore():
+        # Read highscore from txt file
+        try:
+            with open('highscore.txt', 'r') as txt_score:
+                highscore = int(txt_score.read())
+                return highscore
+        except (FileNotFoundError, ValueError):
+            # If file doesn't exist or contains invalid data
+            return 0
 
 if __name__ == '__main__':
     game = Game()
