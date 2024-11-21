@@ -11,6 +11,8 @@ A classic Snake Game implemented in Python using Tkinter for the GUI.
 - [Game Controls](#game-controls)
 - [How to Play](#how-to-play)
 - [High Score](#high-score-tracking)
+- [Code Structure](#code-structure)
+- [Classes](#classes)
 - [Known Issues](#known-issues)
 - [Future Improvements](#future-improvements)
 - [Contact Information](#contact-information)
@@ -25,17 +27,44 @@ Navigate the snake to eat food, grow longer, and try to achieve the highest scor
 - High score tracking saved between sessions.
 
 ## Screenshots
-- **Game Play Screenshot**
+- **Demo**
+
 ![Game Play Image One](./img/game_play_1.png)
 ![Game Play Image Two](./img/game_play_2.png)
 
 
 - **Game Over Screenshot**
+
 ![Game Over](./img/game_over.png)
 
 ## Requirements
 - **Python 3.6 or later**
 - **Tkinter** (usually included with Python on Windows and macOS)
+
+## Optional: Using a Virtual Environment
+
+It's good practice to use a virtual environment to manage dependencies.
+
+### Steps to Create a Virtual Environment
+
+1. **Create a virtual environment:**
+    ```bash
+    python3 -m venv venv
+    ```
+2. **Activate the virtual environment:**
+    - **Windows:**
+        ```bash
+        venv\Scripts\activate
+        ```
+    - **macOS and Linux:**
+        ```bash
+        source venv/bin/activate
+        ```
+
+3. **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Installation
 ### Windows and macOS
@@ -65,14 +94,22 @@ Navigate the snake to eat food, grow longer, and try to achieve the highest scor
     ```
 
 3. Clone or download this repository to your local machine:
-   ```bash
-   git clone
-   ```
+    ```bash
+    # Using HTTPS
+    git clone https://github.com/hub-mm/snake_game.git
+
+    # Alternatively, using SSH
+    git clone git@github.com:hub-mm/snake_game.git
+    ```
 
 ## Running the Game
 Navigate to the directory containing main.py file and run:
 ```bash
     python3 main.py
+```
+#### If *Python3* not recognised
+```bash
+    python main.py
 ```
 
 ## Game Controls
@@ -94,6 +131,16 @@ Navigate to the directory containing main.py file and run:
 - The game saves the highest scored achieved in a file named highscore.txt.
 - The high score is displayed on the game over screen and next to the score.
 - **Reset High Score:** To reset the high score, delete the *highscore.txt* file.
+
+## Code Structure
+- **main.py:** The main game logic and entry point.
+- **img/:** Directory containing game screenshots and assets.
+- **highscore.txt:** File storing the high score (created automatically).
+
+## Classes
+- **Snake:** Manages the snake’s position, movement, and rendering.
+- **Food:** Manages food placement ensuring it doesn’t appear on the snake.
+- **Game:** Handles game initialization, main loop, user input, collision detection, scoring, and game state management.
 
 ## Known Issues
 - **Tkinter Not Installed Error:**
