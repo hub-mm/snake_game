@@ -31,7 +31,7 @@ class Snake:
 
             square = self.canvas.create_rectangle(
                 x_coord, y_coord, x_coord + SPACE_SIZE, y_coord + SPACE_SIZE,
-                fill=color, outline=BACKGROUND_COLOR, tags='snake'
+                fill=color, outline=color, tags='snake'
             )
             self.squares.append(square)
 
@@ -63,11 +63,12 @@ class Game:
 
         # Initialize the main window
         self.window = Tk()
-        self.window.title('Snake Game')
+        self.window.title('SnaKeGamE')
         self.window.resizable(False, False)
 
         # Create label and canvas
-        self.label = Label(self.window, text=f"Score: {self.score}", font=('consolas', 30))
+        self.label = Label(self.window, text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}",
+                           font=('consolas', 30))
         self.label.pack()
 
         self.canvas = Canvas(self.window, bg=BACKGROUND_COLOR, height=GAME_HEIGHT, width=GAME_WIDTH)
@@ -151,7 +152,7 @@ class Game:
             self.score += 1
             self.speed = max(self.speed - 2, 20)
 
-            self.label.config(text=f"Score: {self.score}")
+            self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}")
 
             # Start wave effect from head
             self.segment_color_index = 0
