@@ -1,4 +1,6 @@
+from operator import iconcat
 from tkinter import *
+from tkinter import messagebox
 import random
 
 # Constants
@@ -223,6 +225,39 @@ class Game:
             fill='WHITE',
             tags='highscore'
         )
+
+        # Prompt play again
+        self.window.after(500, self.ask_play_again)
+
+    def ask_play_again(self):
+        response = messagebox.askyesno('Play Again?', 'Do you want to play again?')
+
+        if response:
+            self.restart_game()
+        else:
+            self.window.destroy()
+
+    def restart_game(self):
+        # Reset variables
+        self.direction = 'right'
+        self.score = 0
+        self.speed = SPEED
+        self.segment_color_index = None
+        self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}")
+
+        # Clear canvas
+        self.canvas.delete(ALL)
+
+        # Bring the window to the front and make active window
+        self.window.focus_force()
+
+        # Recreate snake and food object
+        self.snake = Snake(self.canvas)
+        self.food = Food(self.canvas, self.snake)
+
+        # Restart game loop
+        self.next_turn()
+
 
     def write_highscore(self):
         # Write highscore to txt file
