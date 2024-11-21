@@ -1,4 +1,3 @@
-from operator import iconcat
 from tkinter import *
 from tkinter import messagebox
 import random
