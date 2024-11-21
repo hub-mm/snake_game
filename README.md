@@ -107,7 +107,6 @@ Navigate to the directory containing main.py file and run:
 - Add sound effects and background music.
 - Implement different difficulty levels.
 - Introduce obstacles and power-ups.
-- Implement restart ability.
 
 ## Contact Information
 - **GitHub:** [GitHub Profile: hub-mm](https://github.com/hub-mm) 
