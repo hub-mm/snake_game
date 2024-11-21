@@ -68,11 +68,12 @@ It's good practice to use a virtual environment to manage dependencies.
 
 ## Installation
 ### Windows and macOS
-1. Download and install Python from the [official website](https://www.python.org/downloads/).
-2. Verify Python installation:
-    ```bash
-    python3 --version
-    ```
+#### Download and install Python from the [official website](https://www.python.org/downloads/).
+
+- #### **Make sure Tkinter is installed correctly:**
+  - **Windows:** Reinstall Python and ensure the Tkinter option is selected.
+  - **macOS:** Use Homebrew or reinstall Python from the official website.
+
 ### Linux
 1. Install Python 3 and Tkinter
    - Debian/Ubuntu:
@@ -104,6 +105,10 @@ It's good practice to use a virtual environment to manage dependencies.
 
 ## Running the Game
 Navigate to the directory containing main.py file and run:
+```bash
+    cd snake
+```
+
 ```bash
     python3 main.py
 ```
