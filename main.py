@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import messagebox
+import tkinter as tk
 import random
 
 # Constants
@@ -226,15 +226,84 @@ class Game:
         )
 
         # Prompt play again
-        self.window.after(500, self.ask_play_again)
+        self.window.after(200, self.ask_play_again)
 
     def ask_play_again(self):
-        response = messagebox.askyesno('Play Again?', 'Do you want to play again?')
+        # Create a new top-level window
+        dialog = tk.Toplevel(self.window)
+        dialog.title('Play Again?')
+        dialog.resizable(False, False)
+        dialog.configure(bg=BACKGROUND_COLOR)
 
-        if response:
-            self.restart_game()
-        else:
-            self.window.destroy()
+        # Set dialog size and position it in the center of the main window
+        dialog_width = 500
+        dialog_height = 150
+        main_x = self.window.winfo_x()
+        main_y = self.window.winfo_y()
+        main_width = self.window.winfo_width()
+        main_height = self.window.winfo_height()
+        pos_x = main_x + (main_width // 2) - (dialog_width // 2)
+        pos_y = main_y + (main_height // 4) - (dialog_height // 2)
+        dialog.geometry(f"{dialog_width}x{dialog_height}+{pos_x}+{pos_y}")
+
+        # Make the dialog modal
+        dialog.transient(self.window)
+        dialog.grab_set()
+
+        message = tk.Label(
+            dialog,
+            text='Do you want to play again?',
+            fg=HEAD_COLOR,
+            bg=BACKGROUND_COLOR,
+            font=('consolas', 24, 'bold')
+        )
+        message.pack(pady=20)
+
+        # Add button frame
+        buttons_frame = tk.Frame(dialog, bg=BACKGROUND_COLOR)
+        buttons_frame.pack(pady=10)
+
+        # Custom 'Yes' button
+        yes_button = tk.Button(
+            buttons_frame,
+            text='Yes',
+            command=lambda: self.restart_game_custom(dialog),
+            width=10,
+            bg=BACKGROUND_COLOR,
+            fg=HEAD_COLOR,
+            activeforeground=HEAD_COLOR,
+            font=('consolas', 16, 'bold'),
+            cursor='hand2',
+            relief='raised',
+            highlightcolor=BACKGROUND_COLOR,
+            highlightthickness=2
+        )
+        yes_button.pack(side='left', padx=5)
+
+        # Custom 'No' button
+        no_button = tk.Button(
+            buttons_frame,
+            text='No',
+            command=lambda: self.close_game(dialog),
+            width=10,
+            bg=BACKGROUND_COLOR,
+            fg=FOOD_COLOR,
+            activeforeground=FOOD_COLOR,
+            font=('consolas', 16, 'bold'),
+            cursor='hand2',
+            relief='raised',
+            highlightcolor=BACKGROUND_COLOR,
+            highlightthickness=2
+        )
+        no_button.pack(side='right', padx=5)
+
+    def restart_game_custom(self, dialog):
+        dialog.destroy()
+        self.restart_game()
+
+    def close_game(self, dialog):
+        dialog.destroy()
+        self.window.destroy()
 
     def restart_game(self):
         # Reset variables
@@ -256,7 +325,6 @@ class Game:
 
         # Restart game loop
         self.next_turn()
-
 
     def write_highscore(self):
         # Write highscore to txt file
