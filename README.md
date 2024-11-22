@@ -138,9 +138,22 @@ Navigate to the directory containing main.py file and run:
 - **Reset High Score:** To reset the high score, delete the *highscore.txt* file.
 
 ## Code Structure
-- **main.py:** The main game logic and entry point.
+- **main.py:** The main directory to start game.
+- **constant_variables/:** Directory containing constant variables.
+  - **constants.py:** File containing Constant variables.
+- **elements/:** Directory containing classes needed for game.
+  - **food.py:** File containing Food class.
+  - **snake.py:** File containing Snake class.
+- **game_play/:** Directory containing game play logic.
+  - **game.py:** File containing Game class.
+- **score/:** Directory containing score txt file.
+  - **highscore.txt:** File containing Highscore (created automatically).
+
+
+- **README.md:** File containing info for using and playing the game.
 - **img/:** Directory containing game screenshots and assets.
-- **highscore.txt:** File storing the high score (created automatically).
+- **requirements.txt:** File used when setting up a virtual environments.
+
 
 ## Classes
 - **Snake:** Manages the snake’s position, movement, and rendering.
