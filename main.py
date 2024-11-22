@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+import tkinter.ttk as ttk
 import random
 
 # Constants
@@ -66,6 +67,40 @@ class Game:
         self.window = Tk()
         self.window.title('SnaKeGamE')
         self.window.resizable(False, False)
+
+        # Initialize the style
+        style = ttk.Style()
+
+        # Use the 'default' theme as a base
+        style.theme_use('default')
+
+        # Configure a new style 'Black.TButton'
+        style.configure('Yes.TButton',
+                        background=BACKGROUND_COLOR,
+                        foreground=HEAD_COLOR,
+                        font=('consolas', 16, 'bold'),
+                        borderwidth=2,
+                        focusthickness=2,
+                        focuscolor='none')
+
+        # Map the style for different states
+        style.map('Yes.TButton',
+                  background=[('active', BACKGROUND_COLOR)],
+                  foreground=[('active', HEAD_COLOR)])
+
+        # Configure a new style 'Black.TButton'
+        style.configure('No.TButton',
+                        background=BACKGROUND_COLOR,
+                        foreground=FOOD_COLOR,
+                        font=('consolas', 16, 'bold'),
+                        borderwidth=2,
+                        focusthickness=2,
+                        focuscolor='none')
+
+        # Map the style for different states
+        style.map('No.TButton',
+                  background=[('active', BACKGROUND_COLOR)],
+                  foreground=[('active', FOOD_COLOR)])
 
         # Create label and canvas
         self.label = Label(self.window, text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}",
@@ -228,7 +263,7 @@ class Game:
         # Prompt play again
         self.window.after(200, self.ask_play_again)
 
-    def ask_play_again(self):
+    def ask_play_again(self, key=None):
         # Create a new top-level window
         dialog = tk.Toplevel(self.window)
         dialog.title('Play Again?')
@@ -263,39 +298,34 @@ class Game:
         buttons_frame = tk.Frame(dialog, bg=BACKGROUND_COLOR)
         buttons_frame.pack(pady=10)
 
-        # Custom 'Yes' button
-        yes_button = tk.Button(
+        # Custom 'Yes' button using ttk with 'Black.TButton' style
+        yes_button = ttk.Button(
             buttons_frame,
             text='Yes',
             command=lambda: self.restart_game_custom(dialog),
-            width=10,
-            bg=BACKGROUND_COLOR,
-            fg=HEAD_COLOR,
-            activeforeground=HEAD_COLOR,
-            font=('consolas', 16, 'bold'),
-            cursor='hand2',
-            relief='raised',
-            highlightcolor=BACKGROUND_COLOR,
-            highlightthickness=2
+            style='Yes.TButton',
+            width=10
         )
         yes_button.pack(side='left', padx=5)
 
-        # Custom 'No' button
-        no_button = tk.Button(
+        # Custom 'No' button using ttk with 'Black.TButton' style
+        no_button = ttk.Button(
             buttons_frame,
             text='No',
             command=lambda: self.close_game(dialog),
-            width=10,
-            bg=BACKGROUND_COLOR,
-            fg=FOOD_COLOR,
-            activeforeground=FOOD_COLOR,
-            font=('consolas', 16, 'bold'),
-            cursor='hand2',
-            relief='raised',
-            highlightcolor=BACKGROUND_COLOR,
-            highlightthickness=2
+            style='No.TButton',
+            width=10
         )
         no_button.pack(side='right', padx=5)
+
+        # Set focus to the 'Yes' button
+        yes_button.focus_set()
+
+        # Bind the Enter key to the 'Yes' button
+        dialog.bind('<Return>', lambda event: self.restart_game_custom(dialog))
+
+        # Optionally, bind the Escape key to the 'No' button
+        dialog.bind('<Escape>', lambda event: self.close_game(dialog))
 
     def restart_game_custom(self, dialog):
         dialog.destroy()
