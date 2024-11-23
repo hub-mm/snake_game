@@ -16,12 +16,27 @@ class Game:
         self.direction = 'right'
         self.score = 0
         self.speed = constants.SPEED
-        self.difficulty = difficulty
         self.mode = mode
+        self.difficulty = difficulty
 
         # Initialize the main window
         self.window = Tk()
-        self.window.title('SnaKeGamE')
+        if self.mode == 'standard':
+            if self.difficulty == 'easy':
+                self.window.title('SnaKeGamE: Standard (easy)')
+            elif self.difficulty == 'medium':
+                self.window.title('SnaKeGamE: Standard (medium)')
+            elif self.difficulty == 'hard':
+                self.window.title('SnaKeGamE: Standard (hard)')
+
+        elif self.mode == 'no_walls':
+            if self.difficulty == 'easy':
+                self.window.title('SnaKeGamE: No Walls (easy)')
+            elif self.difficulty == 'medium':
+                self.window.title('SnaKeGamE: No Walls (medium)')
+            elif self.difficulty == 'hard':
+                self.window.title('SnaKeGamE: No Walls (hard)')
+
         self.window.resizable(False, False)
 
         # Initialize the style
@@ -194,13 +209,10 @@ class Game:
             self.score += 1
 
             if self.difficulty == 'easy':
-                print(self.speed)
                 self.speed = max(self.speed - 1, 20)
             elif self.difficulty == 'medium':
-                print(self.speed)
                 self.speed = max(self.speed - 2, 20)
             elif self.difficulty == 'hard':
-                print(self.speed)
                 self.speed = max(self.speed - 5, 20)
 
             self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore(self)}")
