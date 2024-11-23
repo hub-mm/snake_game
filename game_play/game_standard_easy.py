@@ -178,7 +178,7 @@ class Game:
         # Check if snake has eaten the food
         if x_coord == self.food.coordinates[0] and y_coord == self.food.coordinates[1]:
             self.score += 1
-            self.speed = max(self.speed - 0.5, 20)
+            self.speed = max(self.speed - 1, 20)
 
             self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}")
 
