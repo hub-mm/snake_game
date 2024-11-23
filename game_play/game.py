@@ -11,11 +11,13 @@ import tkinter.ttk as ttk
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, mode, difficulty):
         # Initialize game variables
         self.direction = 'right'
         self.score = 0
         self.speed = constants.SPEED
+        self.difficulty = difficulty
+        self.mode = mode
 
         # Initialize the main window
         self.window = Tk()
@@ -85,7 +87,7 @@ class Game:
         # Create label and canvas
         self.label = Label(
             self.window,
-            text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}",
+            text=f"Score: {self.score}\tHighscore: {Game.read_highscore(self)}",
             font=('consolas', 30)
         )
         self.label.pack()
@@ -136,7 +138,7 @@ class Game:
 
         self.window.mainloop()
 
-    def next_turn(self, *args):
+    def next_turn(self):
         x_coord, y_coord = self.snake.coordinates[0]
 
         # Determine the new position of the head based on the direction
@@ -148,6 +150,18 @@ class Game:
             x_coord -= constants.SPACE_SIZE
         elif self.direction == 'right':
             x_coord += constants.SPACE_SIZE
+
+        # Handle No Walls Mode by wrapping around
+        if self.mode == 'no_walls':
+            if x_coord < 0:
+                x_coord = constants.GAME_WIDTH - constants.SPACE_SIZE
+            elif x_coord >= constants.GAME_WIDTH:
+                x_coord = 0
+
+            if y_coord < 0:
+                y_coord = constants.GAME_HEIGHT - constants.SPACE_SIZE
+            elif y_coord >= constants.GAME_HEIGHT:
+                y_coord = 0
 
         # Insert new head position at the beginning of the coordinates list
         self.snake.coordinates.insert(0, [x_coord, y_coord])
@@ -178,9 +192,18 @@ class Game:
         # Check if snake has eaten the food
         if x_coord == self.food.coordinates[0] and y_coord == self.food.coordinates[1]:
             self.score += 1
-            self.speed = max(self.speed - 1, 20)
 
-            self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}")
+            if self.difficulty == 'easy':
+                print(self.speed)
+                self.speed = max(self.speed - 1, 20)
+            elif self.difficulty == 'medium':
+                print(self.speed)
+                self.speed = max(self.speed - 2, 20)
+            elif self.difficulty == 'hard':
+                print(self.speed)
+                self.speed = max(self.speed - 5, 20)
+
+            self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore(self)}")
 
             # Start wave effect from head
             self.segment_color_index = 0
@@ -194,12 +217,20 @@ class Game:
             self.canvas.delete(self.snake.squares[-1])
             del self.snake.squares[-1]
 
-        # Check for collisions
-        if self.check_collision():
+        # Check for collisions only if mode is 'standard'
+        if self.mode == 'standard' and self.check_collision():
             self.game_over()
+
+        elif self.mode == 'no_walls':
+            # Additional collision checks for self-collision
+            if self.check_self_collision():
+                self.game_over()
+            else:
+                # Continue the game
+                self.window.after(self.speed, self.next_turn)
         else:
             # Continue the game
-            self.window.after(self.speed, self.next_turn, *args)
+            self.window.after(self.speed, self.next_turn)
 
     def change_direction(self, new_direction):
         if new_direction == 'left' and self.direction != 'right':
@@ -212,23 +243,30 @@ class Game:
             self.direction = new_direction
 
     def check_collision(self):
+        if self.mode == 'standard':
+            x_coord, y_coord = self.snake.coordinates[0]
+            # Check collision with walls
+            if x_coord < 0 or x_coord + constants.SPACE_SIZE > constants.GAME_WIDTH:
+                return True
+            elif y_coord < 0 or y_coord + constants.SPACE_SIZE > constants.GAME_HEIGHT:
+                return True
+
+            # Check collision with self
+            return self.check_self_collision()
+        elif self.mode == 'no_walls':
+            # In 'no_walls' mode, only check self-collision
+            return self.check_self_collision()
+
+    def check_self_collision(self):
         x_coord, y_coord = self.snake.coordinates[0]
-
-        # Check collision with walls
-        if x_coord < 0 or x_coord + constants.SPACE_SIZE > constants.GAME_WIDTH:
-            return True
-        elif y_coord < 0 or y_coord + constants.SPACE_SIZE > constants.GAME_HEIGHT:
-            return True
-
         # Check collision with self
         for body_part in self.snake.coordinates[1:]:
             if x_coord == body_part[0] and y_coord == body_part[1]:
                 return True
-
         return False
 
     def game_over(self):
-        highscore = Game.read_highscore()
+        highscore = Game.read_highscore(self)
 
         if highscore < self.score:
             self.write_highscore()
@@ -290,7 +328,7 @@ class Game:
         buttons_frame = tk.Frame(dialog, bg=constants.BACKGROUND_COLOR)
         buttons_frame.pack(pady=10)
 
-        # Custom 'Yes' button using ttk with 'Black.TButton' style
+        # Custom 'Yes' button using ttk with 'Yes.TButton' style
         yes_button = ttk.Button(
             buttons_frame,
             text='Yes',
@@ -300,7 +338,7 @@ class Game:
         )
         yes_button.pack(side='left', padx=5)
 
-        # Custom 'No' button using ttk with 'Black.TButton' style
+        # Custom 'No' button using ttk with 'No.TButton' style
         no_button = ttk.Button(
             buttons_frame,
             text='No',
@@ -314,7 +352,7 @@ class Game:
         buttons_frame_below = tk.Frame(dialog, bg=constants.BACKGROUND_COLOR)
         buttons_frame_below.pack(pady=10)
 
-        # Custom 'Menu' button using ttk with 'Black.TButton' style
+        # Custom 'Menu' button using ttk with 'menu.TButton' style
         menu_button = ttk.Button(
             buttons_frame_below,
             text='Menu',
@@ -332,6 +370,9 @@ class Game:
 
         # Optionally, bind the Escape key to the 'No' button
         dialog.bind('<Escape>', lambda event: self.close_game(dialog))
+
+        # Optionally, bind the M key to the 'No' button
+        dialog.bind('<m>', lambda event: self.open_menu(dialog))
 
     def restart_game_custom(self, dialog):
         dialog.destroy()
@@ -352,7 +393,7 @@ class Game:
         self.score = 0
         self.speed = constants.SPEED
         self.segment_color_index = None
-        self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}")
+        self.label.config(text=f"Score: {self.score}\tHighscore: {Game.read_highscore(self)}")
 
         # Clear canvas
         self.canvas.delete(ALL)
@@ -369,16 +410,59 @@ class Game:
 
     def write_highscore(self):
         # Write highscore to txt file
-        with open('./score/highscore_standard_easy.txt', 'w') as txt_score:
-            txt_score.write(f"{self.score}")
+        if self.mode == 'standard':
+            if self.difficulty == 'easy':
+                with open('./score/highscore_standard_easy.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
+            elif self.difficulty == 'medium':
+                with open('./score/highscore_standard_medium.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
+            elif self.difficulty == 'hard':
+                with open('./score/highscore_standard_hard.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
 
-    @staticmethod
-    def read_highscore():
+        elif self.mode == 'no_walls':
+            if self.difficulty == 'easy':
+                with open('./score/highscore_no_walls_easy.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
+            elif self.difficulty == 'medium':
+                with open('./score/highscore_no_walls_medium.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
+            elif self.difficulty == 'hard':
+                with open('./score/highscore_no_walls_hard.txt', 'w') as txt_score:
+                    txt_score.write(f"{self.score}")
+
+    def read_highscore(self):
         # Read highscore from txt file
         try:
-            with open('./score/highscore_standard_easy.txt', 'r') as txt_score:
-                highscore = int(txt_score.read())
-                return highscore
+            if self.mode == 'standard':
+                if self.difficulty == 'easy':
+                    with open('./score/highscore_standard_easy.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+                elif self.difficulty == 'medium':
+                    with open('./score/highscore_standard_medium.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+                elif self.difficulty == 'hard':
+                    with open('./score/highscore_standard_hard.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+
+            elif self.mode == 'no_walls':
+                if self.difficulty == 'easy':
+                    with open('./score/highscore_no_walls_easy.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+                elif self.difficulty == 'medium':
+                    with open('./score/highscore_no_walls_medium.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+                elif self.difficulty == 'hard':
+                    with open('./score/highscore_no_walls_hard.txt', 'r') as txt_score:
+                        highscore = int(txt_score.read())
+                        return highscore
+
         except (FileNotFoundError, ValueError):
             # If file doesn't exist or contains invalid data
             return 0

@@ -1,8 +1,6 @@
 # ./game_play/game_mode.py
 
-from game_play import game_standard_easy
-from game_play import game_standard_medium
-from game_play import game_standard_hard
+from game_play import game
 from constant_variables import constants
 
 from tkinter import *
@@ -142,21 +140,31 @@ class GameMode:
         message = tk.Label(
             self.dialog,
             text='Choose Your Game Mode',
-            fg=constants.HEAD_COLOR,
             bg=constants.BACKGROUND_COLOR,
+            fg=constants.HEAD_COLOR,
             font=('consolas', 24, 'bold')
         )
-        message.pack(pady=20)
+        message.pack(pady=10)
 
-        # Add button frame
-        buttons_frame = tk.Frame(self.dialog, bg=constants.BACKGROUND_COLOR)
-        buttons_frame.pack(pady=10)
+        # Add UI elements to the dialog with Game Mode
+        message = tk.Label(
+            self.dialog,
+            text='standard',
+            bg=constants.BACKGROUND_COLOR,
+            fg='white',
+            font=('consolas', 18, 'bold', 'underline')
+        )
+        message.pack()
+
+        # Add button frame standard
+        buttons_frame_standard = tk.Frame(self.dialog, bg=constants.BACKGROUND_COLOR)
+        buttons_frame_standard.pack(pady=10)
 
         # Custom 'Easy' button using ttk with 'easy.TButton' style
         easy_button = ttk.Button(
-            buttons_frame,
+            buttons_frame_standard,
             text='Easy',
-            command=self.start_easy_game,
+            command=self.start_easy_game_standard,
             style='easy.TButton',
             width=10
         )
@@ -164,9 +172,9 @@ class GameMode:
 
         # Custom 'Medium' button using ttk with 'medium.TButton' style
         medium_button = ttk.Button(
-            buttons_frame,
+            buttons_frame_standard,
             text='Medium',
-            command=self.start_medium_game,
+            command=self.start_medium_game_standard,
             style='medium.TButton',
             width=10
         )
@@ -174,9 +182,53 @@ class GameMode:
 
         # Custom 'Hard' button using ttk with 'hard.TButton' style
         hard_button = ttk.Button(
-            buttons_frame,
+            buttons_frame_standard,
             text='Hard',
-            command=self.start_hard_game,
+            command=self.start_hard_game_standard,
+            style='hard.TButton',
+            width=10
+        )
+        hard_button.pack(side='left', padx=5)
+
+        # Add UI elements to the dialog with Game Mode
+        message = tk.Label(
+            self.dialog,
+            text='no walls',
+            bg=constants.BACKGROUND_COLOR,
+            fg='white',
+            font=('consolas', 18, 'bold', 'underline')
+        )
+        message.pack(pady=10)
+
+        # Add button frame no wall
+        buttons_frame_no_wall = tk.Frame(self.dialog, bg=constants.BACKGROUND_COLOR)
+        buttons_frame_no_wall.pack()
+
+        # Custom 'Easy' button using ttk with 'easy.TButton' style
+        easy_button = ttk.Button(
+            buttons_frame_no_wall,
+            text='Easy',
+            command=self.start_easy_game_no_wall,
+            style='easy.TButton',
+            width=10
+        )
+        easy_button.pack(side='left', padx=5)
+
+        # Custom 'Medium' button using ttk with 'medium.TButton' style
+        medium_button = ttk.Button(
+            buttons_frame_no_wall,
+            text='Medium',
+            command=self.start_medium_game_no_wall,
+            style='medium.TButton',
+            width=10
+        )
+        medium_button.pack(side='left', padx=5)
+
+        # Custom 'Hard' button using ttk with 'hard.TButton' style
+        hard_button = ttk.Button(
+            buttons_frame_no_wall,
+            text='Hard',
+            command=self.start_hard_game_no_wall,
             style='hard.TButton',
             width=10
         )
@@ -185,17 +237,29 @@ class GameMode:
         # Start the main event loop
         self.window.mainloop()
 
-    def start_easy_game(self):
+    def start_easy_game_standard(self):
         self.destroy_windows()
-        game_standard_easy.Game()
+        game.Game('standard', 'easy')
 
-    def start_medium_game(self):
+    def start_medium_game_standard(self):
         self.destroy_windows()
-        game_standard_medium.Game()
+        game.Game('standard', 'medium')
 
-    def start_hard_game(self):
+    def start_hard_game_standard(self):
         self.destroy_windows()
-        game_standard_hard.Game()
+        game.Game('standard', 'hard')
+
+    def start_easy_game_no_wall(self):
+        self.destroy_windows()
+        game.Game('no_walls', 'easy')
+
+    def start_medium_game_no_wall(self):
+        self.destroy_windows()
+        game.Game('no_walls', 'medium')
+
+    def start_hard_game_no_wall(self):
+        self.destroy_windows()
+        game.Game('no_walls', 'hard')
 
     def destroy_windows(self):
         if self.dialog.winfo_exists():

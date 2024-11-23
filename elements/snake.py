@@ -20,7 +20,10 @@ class Snake:
             color = constants.HEAD_COLOR if index == 0 else constants.SNAKE_COLOR
 
             square = self.canvas.create_rectangle(
-                x_coord, y_coord, x_coord + constants.SPACE_SIZE, y_coord + constants.SPACE_SIZE,
+                x_coord,
+                y_coord,
+                x_coord + constants.SPACE_SIZE,
+                y_coord + constants.SPACE_SIZE,
                 fill=color, outline=color, tags='snake'
             )
             self.squares.append(square)
