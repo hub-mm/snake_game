@@ -1,8 +1,10 @@
-# ./gameplay/game.py
+# ./game_play/game_standard_medium.py
 
+from game_play import game_mode
 from constant_variables import constants
 from elements import snake
 from elements import food
+
 from tkinter import *
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -26,37 +28,66 @@ class Game:
         # Use the 'default' theme as a base
         style.theme_use('default')
 
-        # Configure a new style 'Black.TButton'
-        style.configure('Yes.TButton',
-                        background=constants.BACKGROUND_COLOR,
-                        foreground=constants.HEAD_COLOR,
-                        font=('consolas', 16, 'bold'),
-                        borderwidth=2,
-                        focusthickness=2,
-                        focuscolor='none')
+        # Configure a new style 'Yes.TButton'
+        style.configure(
+            'Yes.TButton',
+            background=constants.BACKGROUND_COLOR,
+            foreground=constants.HEAD_COLOR,
+            font=('consolas', 16, 'bold'),
+            borderwidth=2,
+            focusthickness=2,
+            focuscolor='none'
+        )
 
         # Map the style for different states
-        style.map('Yes.TButton',
-                  background=[('active', constants.BACKGROUND_COLOR)],
-                  foreground=[('active', constants.HEAD_COLOR)])
+        style.map(
+            'Yes.TButton',
+            background=[('active', constants.BACKGROUND_COLOR)],
+            foreground=[('active', constants.SNAKE_COLOR)]
+        )
 
-        # Configure a new style 'Black.TButton'
-        style.configure('No.TButton',
-                        background=constants.BACKGROUND_COLOR,
-                        foreground=constants.FOOD_COLOR,
-                        font=('consolas', 16, 'bold'),
-                        borderwidth=2,
-                        focusthickness=2,
-                        focuscolor='none')
+        # Configure a new style 'No.TButton'
+        style.configure(
+            'No.TButton',
+            background=constants.BACKGROUND_COLOR,
+            foreground=constants.FOOD_COLOR,
+            font=('consolas', 16, 'bold'),
+            borderwidth=2,
+            focusthickness=2,
+            focuscolor='none'
+        )
 
         # Map the style for different states
-        style.map('No.TButton',
-                  background=[('active', constants.BACKGROUND_COLOR)],
-                  foreground=[('active', constants.FOOD_COLOR)])
+        style.map(
+            'No.TButton',
+            background=[('active', constants.BACKGROUND_COLOR)],
+            foreground=[('active', constants.SNAKE_COLOR)]
+        )
+
+        # Configure a new style 'Menu.TButton'
+        style.configure(
+            'menu.TButton',
+            background=constants.BACKGROUND_COLOR,
+            foreground='blue',
+            font=('consolas', 16, 'bold'),
+            borderwidth=2,
+            focusthickness=2,
+            focuscolor='none'
+        )
+
+        # Map the style for different states
+        style.map(
+            'menu.TButton',
+            background=[('active', constants.BACKGROUND_COLOR)],
+            foreground=[('active', constants.SNAKE_COLOR)]
+        )
 
         # Create label and canvas
-        self.label = Label(self.window, text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}",
-                           font=('consolas', 30))
+        self.label = Label(
+            self.window,
+            text=f"Score: {self.score}\tHighscore: {Game.read_highscore()}",
+            font=('consolas', 30)
+        )
         self.label.pack()
 
         self.canvas = Canvas(
@@ -123,8 +154,12 @@ class Game:
 
         # Create new square for the head with HEAD_COLOR
         square = self.canvas.create_rectangle(
-            x_coord, y_coord, x_coord + constants.SPACE_SIZE, y_coord + constants.SPACE_SIZE,
-            fill=constants.HEAD_COLOR, outline=constants.BACKGROUND_COLOR
+            x_coord,
+            y_coord,
+            x_coord + constants.SPACE_SIZE,
+            y_coord + constants.SPACE_SIZE,
+            fill=constants.HEAD_COLOR,
+            outline=constants.BACKGROUND_COLOR
         )
         self.snake.squares.insert(0, square)
 
@@ -229,13 +264,13 @@ class Game:
 
         # Set dialog size and position it in the center of the main window
         dialog_width = 500
-        dialog_height = 150
+        dialog_height = 250
         main_x = self.window.winfo_x()
         main_y = self.window.winfo_y()
         main_width = self.window.winfo_width()
         main_height = self.window.winfo_height()
         pos_x = main_x + (main_width // 2) - (dialog_width // 2)
-        pos_y = main_y + (main_height // 4) - (dialog_height // 2)
+        pos_y = main_y + (main_height // 3) - (dialog_height // 2)
         dialog.geometry(f"{dialog_width}x{dialog_height}+{pos_x}+{pos_y}")
 
         # Make the dialog modal
@@ -263,7 +298,7 @@ class Game:
             style='Yes.TButton',
             width=10
         )
-        yes_button.pack(side='left', padx=5)
+        yes_button.pack(side='right', padx=5)
 
         # Custom 'No' button using ttk with 'Black.TButton' style
         no_button = ttk.Button(
@@ -273,7 +308,21 @@ class Game:
             style='No.TButton',
             width=10
         )
-        no_button.pack(side='right', padx=5)
+        no_button.pack(side='left', padx=5)
+
+        # Add button frame row below
+        buttons_frame_below = tk.Frame(dialog, bg=constants.BACKGROUND_COLOR)
+        buttons_frame_below.pack(pady=10)
+
+        # Custom 'Menu' button using ttk with 'Black.TButton' style
+        menu_button = ttk.Button(
+            buttons_frame_below,
+            text='Menu',
+            command=lambda: self.open_menu(dialog),
+            style='menu.TButton',
+            width=20
+        )
+        menu_button.pack(padx=5)
 
         # Set focus to the 'Yes' button
         yes_button.focus_set()
@@ -291,6 +340,11 @@ class Game:
     def close_game(self, dialog):
         dialog.destroy()
         self.window.destroy()
+
+    def open_menu(self, dialog):
+        dialog.destroy()
+        self.window.destroy()
+        game_mode.GameMode()
 
     def restart_game(self):
         # Reset variables
@@ -315,14 +369,14 @@ class Game:
 
     def write_highscore(self):
         # Write highscore to txt file
-        with open('./score/highscore.txt', 'w') as txt_score:
+        with open('./score/highscore_standard_medium.txt', 'w') as txt_score:
             txt_score.write(f"{self.score}")
 
     @staticmethod
     def read_highscore():
         # Read highscore from txt file
         try:
-            with open('./score/highscore.txt', 'r') as txt_score:
+            with open('./score/highscore_standard_medium.txt', 'r') as txt_score:
                 highscore = int(txt_score.read())
                 return highscore
         except (FileNotFoundError, ValueError):
