@@ -25,10 +25,13 @@ Navigate the snake to eat food, grow longer, and try to achieve the highest scor
 - Simple and intuitive controls.
 - Increasing difficulty as the snake grows.
 - High score tracking saved between sessions.
+- Different game modes.
 
 ## Screenshots
 - **Demo**
 
+
+![Game Play Mode](./img/start_menu.png)
 ![Game Play Image One](./img/game_play_1.png)
 ![Game Play Image Two](./img/game_play_2.png)
 
@@ -36,6 +39,7 @@ Navigate the snake to eat food, grow longer, and try to achieve the highest scor
 - **Game Over Screenshot**
 
 ![Game Over](./img/game_over.png)
+![Game Over Menu](./img/game_over_menu.png)
 
 ## Requirements
 - **Python 3.6 or later**
