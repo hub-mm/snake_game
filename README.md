@@ -28,15 +28,14 @@ Navigate the snake to eat food, grow longer, and try to achieve the highest scor
 - Different game modes.
 
 ## Screenshots
-- **Demo**
-
+- ### **Demo**
 
 ![Game Play Mode](./img/start_menu.png)
 ![Game Play Image One](./img/game_play_1.png)
 ![Game Play Image Two](./img/game_play_2.png)
+![No_Walls](./img/no_walls.png)
 
-
-- **Game Over Screenshot**
+- ### **Game Over Screenshot**
 
 ![Game Over](./img/game_over.png)
 ![Game Over Menu](./img/game_over_menu.png)
@@ -174,7 +173,6 @@ Navigate to the directory containing main.py file and run:
 
 ## Future Improvements
 - Add sound effects and background music.
-- Implement different difficulty levels.
 - Introduce obstacles and power-ups.
 
 ## Contact Information
